@@ -4,7 +4,7 @@ use std::ops::{Deref, DerefMut};
 
 /// A wrapper struct that unsafely is always Send.
 pub struct UnsafeSend<T> {
-	i: T
+	pub i: T
 }
 unsafe impl<T> Send for UnsafeSend<T> {}
 
@@ -32,11 +32,12 @@ impl<T> DerefMut for UnsafeSend<T> {
 
 /// A wrapper struct that unsafely is always sync.
 pub struct UnsafeSync<T> {
-	i: T
+	pub i: T
 }
 unsafe impl<T> Sync for UnsafeSync<T> {}
 
 impl<T> UnsafeSync<T> {
+
 	pub fn new( internal: T ) -> Self {
 		Self { i: internal }
 	}
