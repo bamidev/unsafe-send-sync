@@ -4,6 +4,7 @@ This is a Rust package that basically provides 3 wrapper types.
 * UnsafeSend
 * UnsafeSync
 * UnsafeSendSync
+
 They can be used to force structs to be Send and/or Sync, which is unsafe of course.
 
 ## Example

@@ -1,6 +1,6 @@
 [package]
 name = "unsafe-send-sync"
-version = "0.0.0"
+version = "0.0.1"
 description = "Unsafe wrappers for making structs Send and/or Sync."
 edition = "2018"
 authors = ["Danny de Jong"]
