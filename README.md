@@ -9,17 +9,18 @@ They can be used to force structs to be Send and/or Sync, which is unsafe of cou
 
 ## Example
 
-```rustc
+```rust
+use std::thread;
 use std::rc::Rc;
-use tokio;
 
-...
-
-let not_send = Rc::<int>::new( 1337 );
-
-assert!( not_send.strong_count() == 1, "We can't really send a reference counted pointer across threads unless it only has one reference." );
-
-tokio::spawn(move || {
-	println!("We found a number: {}", *not_send);
-});
+fn main() {
+    let not_send = UnsafeSend::new( Rc::<u32>::new( 1337 ) );
+    
+    assert!( not_send.strong_count() == 1,
+        "We can't really send a reference counted pointer across threads unless it only has one reference." );
+    
+    thread::spawn(move || {
+        println!("We found a number: {}", *not_send);
+    });
+}
 ```
