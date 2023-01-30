@@ -3,18 +3,28 @@ use std::ops::{Deref, DerefMut};
 
 
 /// A wrapper type that is always `Send`.
-pub struct UnsafeSend<T> {
-	pub i: T
-}
+pub struct UnsafeSend<T>(pub T);
 unsafe impl<T> Send for UnsafeSend<T> {}
 
 impl<T> UnsafeSend<T> {
 	pub fn new( internal: T ) -> Self {
-		Self { i: internal }
+		Self (internal)
 	}
 
 	pub fn unwrap( self ) -> T {
-		self.i
+		self.0
+	}
+}
+
+impl<T> AsMut<T> for UnsafeSend<T> {
+	fn as_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+
+impl<T> AsRef<T> for UnsafeSend<T> {
+	fn as_ref(&self) -> &T {
+		&self.0
 	}
 }
 
@@ -22,41 +32,56 @@ impl<T> Clone for UnsafeSend<T> where
 	T: Clone
 {
 	fn clone( &self ) -> Self {
-		Self::new( self.i.clone() )
+		Self(self.0.clone())
 	}
 }
 
 impl<T> Default for UnsafeSend<T> where T: Default {
 	fn default() -> Self {
-		Self { i: T::default() }
+		Self(T::default())
 	}
 }
 
 impl<T> Deref for UnsafeSend<T> {
 	type Target = T;
 
-	fn deref( &self ) -> &Self::Target  { &self.i }
+	fn deref( &self ) -> &Self::Target  { &self.0 }
 }
 
 impl<T> DerefMut for UnsafeSend<T> {
-	fn deref_mut( &mut self ) -> &mut Self::Target  { &mut self.i }
+	fn deref_mut( &mut self ) -> &mut Self::Target  { &mut self.0 }
 }
 
+impl<T> From<T> for UnsafeSend<T> {
+	fn from(other: T) -> Self {
+		Self(other)
+	}
+}
 
 
 /// A wrapper type that is always `Sync`.
-pub struct UnsafeSync<T> {
-	pub i: T
-}
+pub struct UnsafeSync<T>(pub T);
 unsafe impl<T> Sync for UnsafeSync<T> {}
 
 impl<T> UnsafeSync<T> {
 	pub fn new( internal: T ) -> Self {
-		Self { i: internal }
+		Self(internal)
 	}
 
 	pub fn unwrap( self ) -> T {
-		self.i
+		self.0
+	}
+}
+
+impl<T> AsMut<T> for UnsafeSync<T> {
+	fn as_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+
+impl<T> AsRef<T> for UnsafeSync<T> {
+	fn as_ref(&self) -> &T {
+		&self.0
 	}
 }
 
@@ -64,62 +89,85 @@ impl<T> Clone for UnsafeSync<T> where
 	T: Clone
 {
 	fn clone( &self ) -> Self {
-		Self::new( self.i.clone() )
+		Self::new( self.0.clone() )
 	}
 }
 
 
 impl<T> Default for UnsafeSync<T> where T: Default {
 	fn default() -> Self {
-		Self { i: T::default() }
+		Self(T::default())
 	}
 }
 
 impl<T> Deref for UnsafeSync<T> {
 	type Target = T;
 
-	fn deref( &self ) -> &Self::Target  { &self.i }
+	fn deref( &self ) -> &Self::Target  { &self.0 }
 }
 
 impl<T> DerefMut for UnsafeSync<T> {
-	fn deref_mut( &mut self ) -> &mut Self::Target  { &mut self.i }
+	fn deref_mut( &mut self ) -> &mut Self::Target  { &mut self.0 }
 }
 
-/// A wrapper type that is always `Send` and `Sync`.
-pub struct UnsafeSendSync<T> {
-	pub i: T
+impl<T> From<T> for UnsafeSync<T> {
+	fn from(other: T) -> Self {
+		Self(other)
+	}
 }
+
+
+/// A wrapper type that is always `Send` and `Sync`.
+pub struct UnsafeSendSync<T>(pub T);
 unsafe impl<T> Send for UnsafeSendSync<T> {}
 unsafe impl<T> Sync for UnsafeSendSync<T> {}
 
 impl<T> UnsafeSendSync<T> {
-	pub fn new( internal: T ) -> Self {
-		Self { i: internal }
+	pub fn new(internal: T) -> Self {
+		Self(internal)
 	}
 
-	pub fn unwrap( self ) -> T { self.i }
+	pub fn unwrap( self ) -> T { self.0 }
+}
+
+impl<T> AsMut<T> for UnsafeSendSync<T> {
+	fn as_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+
+impl<T> AsRef<T> for UnsafeSendSync<T> {
+	fn as_ref(&self) -> &T {
+		&self.0
+	}
 }
 
 impl<T> Default for UnsafeSendSync<T> where T: Default {
 	fn default() -> Self {
-		Self { i: T::default() }
+		Self(T::default())
 	}
 }
 
 impl<T> Deref for UnsafeSendSync<T> {
 	type Target = T;
 
-	fn deref( &self ) -> &Self::Target  { &self.i }
+	fn deref( &self ) -> &Self::Target  { &self.0 }
 }
 
 impl<T> DerefMut for UnsafeSendSync<T> {
-	fn deref_mut( &mut self ) -> &mut Self::Target  { &mut self.i }
+	fn deref_mut( &mut self ) -> &mut Self::Target  { &mut self.0 }
 }
 
 impl<T> Clone for UnsafeSendSync<T> where
 	T: Clone
 {
 	fn clone( &self ) -> Self {
-		Self::new( self.i.clone() )
+		Self::new( self.0.clone() )
+	}
+}
+
+impl<T> From<T> for UnsafeSendSync<T> {
+	fn from(other: T) -> Self {
+		Self(other)
 	}
 }
